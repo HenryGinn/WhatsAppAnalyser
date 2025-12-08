@@ -43,7 +43,7 @@ class ChatMessenger(Chat):
     def init_messages_from_source(self):
         self.messages = pd.DataFrame([
             self.get_parsed_message(ID, message)
-            for ID, message in enumerate(self.chat["messages"][:10])])
+            for ID, message in enumerate(self.chat["messages"])])
 
     def get_parsed_message(self, ID, message):
         parsed_message = {"ID": ID} | {

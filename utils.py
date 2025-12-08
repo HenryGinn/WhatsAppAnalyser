@@ -25,3 +25,10 @@ def get_splits(string):
                " ".join(word for word in words[word_limit:])]
               for word_limit in range(len(words))]
     return splits
+
+def append_to_column_names(df, string):
+    rename_dict = {
+        name: f"{name}{string}"
+        for name in df.columns}
+    df.rename(columns=rename_dict, inplace=True)
+    

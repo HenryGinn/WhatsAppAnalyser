@@ -9,3 +9,6 @@ chat = messenger.chats[0]
 chat.load_chat()
 chat.set_messages()
 chat.set_summary()
+#chat.output_summary_text()
+#chat.output_summary_plot()
+chat.set_activity_day()
