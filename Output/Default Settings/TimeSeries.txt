@@ -1,3 +1,0 @@
-{
-	"fontsize_ticks": 14
-}

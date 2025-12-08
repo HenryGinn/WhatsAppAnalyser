@@ -1,10 +1,11 @@
-from whatsapp import WhatsApp
+from Messaging.messenger import Messenger
 
-path = "/home/henry/Downloads/WhatsApp Chats"
+path = r"/home/henry/Documents/Stuff/Data From Services/FacebookData/01_01_2004__03_06_2025"
 
-whatsapp = WhatsApp(path)
-whatsapp.initialise_chats()
-#whatsapp.process("preprocess", force=True)
-whatsapp.process("read")
-self = whatsapp.chat_objects["Connections"]
-whatsapp.process("people")
+messenger = Messenger(path)
+messenger.init_chats()
+chat = messenger.chats[0]
+
+chat.load_chat()
+chat.set_messages()
+chat.set_summary()

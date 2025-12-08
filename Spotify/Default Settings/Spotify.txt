@@ -1,5 +1,0 @@
-{
-	"output": "show",
-	"start_date": null,
-	"end_date": null
-}
