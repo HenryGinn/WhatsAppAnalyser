@@ -1,5 +1,6 @@
 import os
 
+import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -30,7 +31,7 @@ class Chat():
     def create_output_folder(self):
         self.set_output_path()
         if not os.path.exists(self.output_path):
-            os.makedir(self.output_path)
+            os.mkdir(self.output_path)
 
     def set_output_path(self):
         self.output_path = os.path.join(
@@ -55,12 +56,12 @@ class Chat():
         self.summary.sort_values("Messages Sent", inplace=True)
 
     def set_word_count(self):
-        self.messages["Word Count"] = (
+        self.messages.loc[:, "Word Count"] = (
             self.messages["Message"]
             .apply(lambda x: len(x.split())))
 
     def set_character_count(self):
-        self.messages["Character Count"] = (
+        self.messages.loc[:, "Character Count"] = (
             self.messages["Message"]
             .apply(lambda x: len(x)))
 
@@ -68,13 +69,13 @@ class Chat():
         self.summary = pd.DataFrame(index=self.messages["Sender"].unique())
 
     def set_message_count(self):
-        self.summary["Messages Sent"] = (
+        self.summary.loc[:, "Messages Sent"] = (
             self.messages
             .groupby("Sender")
             .count()["Message"])
 
     def set_photo_count(self):
-        self.summary["Photos Sent"] = (
+        self.summary.loc[:, "Photos Sent"] = (
             self.photos
             .groupby("Sender")
             .count()
@@ -160,4 +161,42 @@ class Chat():
     # Time series
 
     def set_activity_day(self):
-        pass
+        times = self.posts["Timestamp"]
+        times = times - times.dt.normalize()
+        bins = pd.timedelta_range("00:00:00", "23:55:00", freq="15min")
+        bin_map = pd.DataFrame(pd.cut(times, bins, labels=False)).value_counts().reset_index()
+        self.activity_day = pd.Series(index=bins)
+        self.activity_day.iloc[:] = 0
+        if bin_map.size != 0:
+            self.activity_day.iloc[bin_map["Timestamp"].astype("int16")] = bin_map["count"].values
+
+    def plot_activity_day(self):
+        self.set_output_activity_day_path()
+        self.init_activity_day_plot()
+        self.plot_activity_day_data()
+        self.plot_activity_day_peripherals()
+        plt.savefig(self.activity_day_path, dpi=600)
+
+    def set_output_activity_day_path(self):
+        self.activity_day_path = os.path.join(
+            self.output_path,
+            "ActivityDay.png")
+
+    def init_activity_day_plot(self):
+        self.fig = plt.figure(figsize=(12, 7))
+        self.ax = self.fig.add_axes([0.07, 0.1, 0.9, 0.8])
+        self.fig.suptitle(f"{self.name} Daily Activity", fontsize=20)
+        
+    def plot_activity_day_peripherals(self):
+        self.ax.tick_params(axis='x', labelsize=12)
+        self.ax.tick_params(axis='y', labelsize=12)
+
+    def plot_activity_day_data(self):
+        times = pd.Timestamp("today").normalize() + self.activity_day.index
+        timeFmt = mdates.DateFormatter('%H:%M')
+        self.ax.xaxis.set_major_formatter(timeFmt)
+        self.ax.plot(
+            times,
+            self.activity_day.values,
+            color="tab:red")
+        

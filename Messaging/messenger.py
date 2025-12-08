@@ -12,5 +12,5 @@ class Messenger(MessagingService):
     def init_chats(self):
         self.chats = [
             ChatMessenger(self, chat_name)
-            for chat_name in os.listdir(self.path)[18:19]]
+            for chat_name in os.listdir(self.path)]
 
