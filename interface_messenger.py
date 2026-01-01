@@ -1,9 +1,11 @@
-from Messaging.messenger import Messenger
+from messaging.messenger.messenger import Messenger
 
-path = r"/home/henry/Documents/Stuff/Data From Services/FacebookData/01_01_2004__03_06_2025"
+path = r"/home/henry/Documents/Stuff/Data From Services/FacebookData/01_01_2004__29_12_2025"
 
 messenger = Messenger(path)
+#messenger.preprocess()
 messenger.init_chats()
+#messenger.rename_media()
 
 for chat in messenger.chats:
     print(chat.name)
